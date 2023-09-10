@@ -35,12 +35,12 @@ export default function Edit() {
 				body: JSON.stringify(story),
 			});
 		} else {
-			const response = await fetch("/api/update-story", {
-				method: "POST",
+			const response = await fetch("/api/save-story", {
+				method: "PUT",
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify(story),
+				body: JSON.stringify({ id: story._id.toString(), story: story }),
 			});
 		}
 	}
@@ -68,6 +68,7 @@ export default function Edit() {
 		});
 
 		const data = await response.json();
+		console.log(data);
 		const story = data.story;
 		setStory(story);
 		setSelectStory(false);
@@ -100,7 +101,7 @@ export default function Edit() {
 		};
 
 		if (story.content) {
-			story.content.push(newChapter);
+			story.content.splice(index + 1, 0, newChapter);
 		} else {
 			story.content = [newChapter];
 		}
@@ -112,28 +113,39 @@ export default function Edit() {
 	return (
 		<div>
 			<div className="flex gap-2">
-				<Button color="primary" onPress={createStory}>
+				<Button color="primary" size="sm" onPress={createStory}>
 					New
 				</Button>
-				<Button color="primary" onPress={openStoryList}>
+				<Button color="primary" size="sm" onPress={openStoryList}>
 					Open
 				</Button>
 			</div>
 			{selectStory && (
 				<div>
 					{storyList.map((story) => (
-						<div key={story._id?.toString()}>
-							<a
-								href={`/edit/${story._id}`}
+						<div
+							key={story._id?.toString()}
+							className="flex gap-2 text-sky-700"
+						>
+							<div
+								className="cursor-pointer"
 								onClick={() => {
 									openStory(story._id);
 								}}
 							>
 								{story.title}
-							</a>
-							<div>{story.author} </div>
-							<div>{story.createDate.toString()} </div>
-							<div>{story.summary}</div>
+							</div>
+							<div className="text-sm text-bottom p-1">{story.author} </div>
+							<div className="text-xs text-bottom p-2">
+								{story.updateDate.toLocaleString("en-US", {
+									year: "numeric",
+									month: "2-digit",
+									day: "2-digit",
+									// hour: "2-digit",
+									// minute: "2-digit",
+								})}
+							</div>
+							{/* <div>{story.summary}</div> */}
 						</div>
 					))}
 				</div>
@@ -155,7 +167,7 @@ export default function Edit() {
 					</div>
 					<textarea
 						className="w-full"
-						rows={10}
+						rows={3}
 						value={story.summary}
 						onChange={(e) => setStory({ ...story, summary: e.target.value })}
 						placeholder="Summary"
@@ -163,6 +175,7 @@ export default function Edit() {
 				</div>
 				<Button
 					color="primary"
+					size="sm"
 					onPress={() => newChapter({ index: -1, sequence: 0 })}
 				>
 					New Chapter
@@ -211,6 +224,7 @@ export default function Edit() {
 			<div>
 				<Button
 					color="primary"
+					size="sm"
 					onPress={() => {
 						saveStory();
 					}}

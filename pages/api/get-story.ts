@@ -14,6 +14,7 @@ export default async function handler(
 	}
 
 	const { storyId } = req.body;
+	// console.log("storyId: ", storyId);
 	const story = await GetStory(storyId);
 	res.status(200).json({ story: story });
 }
