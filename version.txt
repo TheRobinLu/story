@@ -1,3 +1,6 @@
+
+0.0.4 fixed text color in dark mode
+
 0.0.3 editPage done
 
 0.0.2 basic functions
