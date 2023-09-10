@@ -111,7 +111,7 @@ export default function Edit() {
 	}
 
 	return (
-		<div>
+		<div className="text-gray-700">
 			<div className="flex gap-2">
 				<Button color="primary" size="sm" onPress={createStory}>
 					New
