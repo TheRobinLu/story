@@ -1,3 +1,5 @@
+0.0.3 editPage done
+
 0.0.2 basic functions
 
 0.0.1 initial creation

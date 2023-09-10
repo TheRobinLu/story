@@ -7,15 +7,16 @@ export default async function handler(
 	res: NextApiResponse
 ) {
 	const { method } = req;
-	const { id } = req.query;
-	const story: IDBStory = req.body;
+
+	const {id, story} = req.body;
 	switch (method) {
 		case "POST":
 			await SaveStory(story);
 			res.status(200).json({ status: "success" });
 			break;
 		case "PUT":
-			await UpdateStory(id, story);
+			await UpdateStory({id, story});
+			
 			res.status(200).json({ status: "success" });
 			break;
 		default:

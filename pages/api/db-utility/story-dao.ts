@@ -1,4 +1,4 @@
-import { IStory } from "@/app/interface/iStory";
+import { IDBStory, IStory } from "@/app/interface/iStory";
 import { MongoClient, Db, ObjectId } from "mongodb";
 
 async function connectToDatabase(): Promise<MongoClient> {
@@ -15,16 +15,28 @@ export async function SaveStory(newStory: IStory) {
 	return result;
 }
 
-export async function UpdateStory(id: any, newStory: IStory) {
+export async function UpdateStory({id, story}: {id: string, story: IStory}) {
 	const client = await connectToDatabase();
 	const db = client.db();
 	const collection = db.collection("story");
 
-	const story = await collection.findOne({ _id: new ObjectId(id) });
-	if (!story) {
-		SaveStory(newStory);
+	const origStory = await collection.findOne({ _id: new ObjectId(id) });
+	console.log("origStory: ", origStory);
+
+	if (!origStory) {
+		SaveStory(story);
 		return null;
 	} else {
+		const newStory: IStory = {
+			title: story.title,
+			author: story.author,
+			createDate: origStory.createDate,
+			updateDate: new Date(),
+			summary: story.summary,
+			content: story.content,
+			editing: false,
+		};
+		console.log("newStory: ", newStory);
 		const result = await collection.updateOne(
 			{ _id: new ObjectId(id) },
 			{ $set: newStory }
@@ -34,11 +46,12 @@ export async function UpdateStory(id: any, newStory: IStory) {
 	}
 }
 
-export async function GetStory(id: any) {
+export async function GetStory(storyId: any) {
 	const client = await connectToDatabase();
 	const db = client.db();
 	const collection = db.collection("story");
-	const story = await collection.findOne({ _id: new ObjectId(id) });
+	const story = await collection.findOne({ _id: new ObjectId(storyId) });
+	console.log("story: ", story);
 	client.close();
 	return story;
 }
