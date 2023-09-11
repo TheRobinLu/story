@@ -15,7 +15,13 @@ export async function SaveStory(newStory: IStory) {
 	return result;
 }
 
-export async function UpdateStory({id, story}: {id: string, story: IStory}) {
+export async function UpdateStory({
+	id,
+	story,
+}: {
+	id: string;
+	story: IStory;
+}) {
 	const client = await connectToDatabase();
 	const db = client.db();
 	const collection = db.collection("story");
@@ -50,10 +56,17 @@ export async function GetStory(storyId: any) {
 	const client = await connectToDatabase();
 	const db = client.db();
 	const collection = db.collection("story");
-	const story = await collection.findOne({ _id: new ObjectId(storyId) });
-	console.log("story: ", story);
+	const story = (await collection.findOne({
+		_id: new ObjectId(storyId),
+	})) as IDBStory;
+
+	const sortedContent = story.content.sort((a, b) => {
+		return a.sequence - b.sequence;
+	});
+
+	const retStory = { ...story, content: sortedContent };
 	client.close();
-	return story;
+	return retStory;
 }
 
 export async function GetStoryList() {

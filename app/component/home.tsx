@@ -26,11 +26,20 @@ export default function Home() {
 			<h1>Story List</h1>
 			<ul>
 				{storyList.map((story) => (
-					<li key={story._id?.toString()}>
-						<a href={`/story/${story._id}`}>{story.title}</a>
-						<div>{story.author} </div>
-						<div>{story.createDate.toString()} </div>
-						<div>{story.summary}</div>
+					<li
+						key={story._id?.toString()}
+						className="p-2 text-purple-950 gap-4 text-bottom"
+					>
+						<div className="flex gap-4 text-bottom align-bottom">
+							<a href={`/story/${story._id}`} className="font-semibold   ">
+								{story.title}
+							</a>
+							<div className="text-sm pt-1 text-bottom">{story.author} </div>
+							<div className="text-xs pt-2 text-bottom">
+								{story.createDate.toString().substring(0, 10)}{" "}
+							</div>
+						</div>
+						<div className="text-xs p-1 text-bottom">{story.summary}</div>
 					</li>
 				))}
 			</ul>
