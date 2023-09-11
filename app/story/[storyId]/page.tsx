@@ -1,21 +1,21 @@
 //import {useState, useEffect} from "react";
 
+import Header from "@/app/component/header";
 import { IDBStory } from "../../interface/iStory";
 
 async function getStory(storyId: string): Promise<IDBStory> {
-	console.log("getStory storyId", storyId);
-
+	console.log({ storyId });
 	const response = await fetch(`${process.env.URL}/api/get-story`, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
 		},
 		body: JSON.stringify({ storyId }),
+		cache: "no-store",
 	});
 
 	const data = await response.json();
 	const story = data.story as IDBStory;
-	console.log(data);
 
 	return story;
 }
@@ -27,24 +27,27 @@ export default async function StoryPage({ params }: any) {
 	// console.log("storyId", storyId);
 
 	return (
-		<div>
-			<h1>Story Page....</h1>
-			<p>Story ID: {storyId}</p>
-
+		<div className="relative max-w-2xl mx-auto">
+			<header className="sticky top-0 z-50 ">
+				<Header />
+			</header>
 			{story && (
-				<div>
-					<div>{story?.title}</div>
-					<div>{story?.author}</div>
-					<div>{story?.summary}</div>
-					{story?.content
-						.sort((a, b) => a.sequence - b.sequence)
-						.map((content, index) => (
-							<div>
-								<div key={index}>{content.subTitle}</div>
-								<div key={index}>{content.content}</div>
-								<div key={index}>{content.sequence}</div>
+				<div className="text-center">
+					<div className="text-lg font-bold ">{story?.title}</div>
+					<div className="font-semibold text-xs">Author: {story?.author}</div>
+					<div className="pt-3 font-semibold text-sm">Summary</div>
+					<div className="p-2 text-xs text-left"> {story?.summary}</div>
+					{story?.content.map((content, index) => (
+						<div>
+							<div className="pt-2" key={index}>
+								{content.subTitle}
 							</div>
-						))}
+							<pre key={index} className="p-2 text-left border-small">
+								{content.content}
+							</pre>
+							{/* <div key={index}>{content.sequence}</div> */}
+						</div>
+					))}
 				</div>
 			)}
 		</div>

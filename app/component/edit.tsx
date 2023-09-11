@@ -137,13 +137,7 @@ export default function Edit() {
 							</div>
 							<div className="text-sm text-bottom p-1">{story.author} </div>
 							<div className="text-xs text-bottom p-2">
-								{story.updateDate.toLocaleString("en-US", {
-									year: "numeric",
-									month: "2-digit",
-									day: "2-digit",
-									// hour: "2-digit",
-									// minute: "2-digit",
-								})}
+								{story.updateDate.toLocaleString().substring(0, 10)}
 							</div>
 							{/* <div>{story.summary}</div> */}
 						</div>
@@ -155,18 +149,21 @@ export default function Edit() {
 				<div className="w-full max-w-2xl">
 					<div>
 						<input
+							className="px-2 rounded-sm p-1 bg-purple-200"
 							value={story.title}
 							onChange={(e) => setStory({ ...story, title: e.target.value })}
 							placeholder="Title"
 						></input>
+						<span className="text-sm text-gray-900 px-2"> Author: </span>
 						<input
+							className="px-2 rounded-sm p-1 bg-purple-200"
 							value={story.author}
 							onChange={(e) => setStory({ ...story, author: e.target.value })}
 							placeholder="Author"
 						></input>
 					</div>
 					<textarea
-						className="w-full"
+						className="w-full rounded-sm p-1 bg-purple-200"
 						rows={3}
 						value={story.summary}
 						onChange={(e) => setStory({ ...story, summary: e.target.value })}
@@ -187,6 +184,7 @@ export default function Edit() {
 							<div className="w-full max-w-2xl">
 								<div key={index}>
 									<input
+										className="px-2 rounded-sm p-1 bg-purple-200"
 										value={item.subTitle}
 										onChange={(e) => {
 											const newContent = [...story.content];
@@ -197,7 +195,7 @@ export default function Edit() {
 								</div>
 								<div>
 									<textarea
-										className="w-full"
+										className="w-full rounded-sm p-1 bg-purple-200"
 										rows={10}
 										value={item.content}
 										onChange={(e) => {

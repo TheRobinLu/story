@@ -1,4 +1,6 @@
 
+0.1.0 read story and edit style
+
 0.0.4 fixed text color in dark mode
 
 0.0.3 editPage done
