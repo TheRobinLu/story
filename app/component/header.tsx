@@ -11,7 +11,7 @@ export default function Header() {
 				<Link href="/edit">Edit</Link>
 				{/* <Link href="/about">About</Link> */}
 			</nav>
-			<div className="flex gap-2 right-0 text-xs font-light">ver: 0.1.0</div>
+			<div className="flex gap-2 right-0 text-xs font-light">ver: 0.1.1</div>
 		</header>
 	);
 }

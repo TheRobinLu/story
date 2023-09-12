@@ -32,7 +32,7 @@ export default function Edit() {
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify(story),
+				body: JSON.stringify({ id: null, story: story }),
 			});
 		} else {
 			const response = await fetch("/api/save-story", {

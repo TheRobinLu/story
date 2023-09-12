@@ -23,7 +23,7 @@ export default function Home() {
 
 	return (
 		<div>
-			<h1>Story List</h1>
+			<h1 className="p-2 text-purple-950">Story List</h1>
 			<ul>
 				{storyList.map((story) => (
 					<li

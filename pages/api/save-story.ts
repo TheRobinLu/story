@@ -8,15 +8,17 @@ export default async function handler(
 ) {
 	const { method } = req;
 
-	const {id, story} = req.body;
+	const { id, story } = req.body;
 	switch (method) {
 		case "POST":
+			console.log("==============save-story.ts ============== ");
+			console.log("story: ", story);
 			await SaveStory(story);
 			res.status(200).json({ status: "success" });
 			break;
 		case "PUT":
-			await UpdateStory({id, story});
-			
+			await UpdateStory({ id, story });
+
 			res.status(200).json({ status: "success" });
 			break;
 		default:
