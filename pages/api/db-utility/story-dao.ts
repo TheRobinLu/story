@@ -10,6 +10,7 @@ export async function SaveStory(newStory: IStory) {
 	const client = await connectToDatabase();
 	const db = client.db();
 	const collection = db.collection("story");
+
 	const result = await collection.insertOne(newStory);
 	client.close();
 	return result;
