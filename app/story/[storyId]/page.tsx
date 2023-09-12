@@ -32,7 +32,7 @@ export default async function StoryPage({ params }: any) {
 				<Header />
 			</header>
 			{story && (
-				<div className="text-center">
+				<div className="text-center text-purple-800">
 					<div className="text-lg font-bold ">{story?.title}</div>
 					<div className="font-semibold text-xs">Author: {story?.author}</div>
 					<div className="pt-3 font-semibold text-sm">Summary</div>
@@ -42,8 +42,11 @@ export default async function StoryPage({ params }: any) {
 							<div className="pt-2" key={index}>
 								{content.subTitle}
 							</div>
-							<pre key={index} className="p-2 text-left border-small">
-								{content.content}
+							<pre
+								key={index}
+								className="p-2 text-left border-small rounded-lg"
+							>
+								<div className="whitespace-pre-wrap">{content.content}</div>
 							</pre>
 							{/* <div key={index}>{content.sequence}</div> */}
 						</div>
