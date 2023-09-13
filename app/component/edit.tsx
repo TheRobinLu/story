@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { IChapter, IDBStory, IDBStoryList, IStory } from "../interface/iStory";
 import { SaveStory } from "@/pages/api/db-utility/story-dao";
 import { ObjectId } from "mongodb";
+import { PurpleGradientButton } from "./button";
 
 export default function Edit() {
 	const [story, setStory] = useState({} as IDBStory);
@@ -113,12 +114,18 @@ export default function Edit() {
 	return (
 		<div className="text-gray-700">
 			<div className="flex gap-2">
-				<Button color="primary" size="sm" onPress={createStory}>
-					New
-				</Button>
-				<Button color="primary" size="sm" onPress={openStoryList}>
-					Open
-				</Button>
+				<PurpleGradientButton
+					text="New"
+					onPress={() => {
+						createStory();
+					}}
+				></PurpleGradientButton>
+				<PurpleGradientButton
+					text="Open"
+					onPress={() => {
+						openStoryList();
+					}}
+				></PurpleGradientButton>
 			</div>
 			{selectStory && (
 				<div>
@@ -149,34 +156,37 @@ export default function Edit() {
 				<div className="w-full max-w-2xl">
 					<div>
 						<input
-							className="px-2 rounded-sm p-1 bg-purple-200"
+							className="px-2 rounded mt-1 font-bold bg-purple-200"
 							value={story.title}
 							onChange={(e) => setStory({ ...story, title: e.target.value })}
 							placeholder="Title"
 						></input>
-						<span className="text-sm text-gray-900 px-2"> Author: </span>
+						<span className="rounded text-sm text-gray-900 px-2">
+							{" "}
+							Author:{" "}
+						</span>
 						<input
-							className="px-2 rounded-sm p-1 bg-purple-200"
+							className="px-2 rounded mt-1 bg-purple-200"
 							value={story.author}
 							onChange={(e) => setStory({ ...story, author: e.target.value })}
 							placeholder="Author"
 						></input>
 					</div>
 					<textarea
-						className="w-full rounded-sm p-1 bg-purple-200"
+						className="w-full rounded mt-1 bg-purple-200"
 						rows={3}
 						value={story.summary}
 						onChange={(e) => setStory({ ...story, summary: e.target.value })}
 						placeholder="Summary"
 					></textarea>
 				</div>
-				<Button
-					color="primary"
-					size="sm"
-					onPress={() => newChapter({ index: -1, sequence: 0 })}
-				>
-					New Chapter
-				</Button>
+
+				<PurpleGradientButton
+					text="New Chapter"
+					onPress={() => {
+						newChapter({ index: -1, sequence: 0 });
+					}}
+				></PurpleGradientButton>
 
 				{story.content?.length > 0 &&
 					story.content.map((item, index) => {
@@ -184,7 +194,7 @@ export default function Edit() {
 							<div className="w-full max-w-2xl">
 								<div key={index}>
 									<input
-										className="px-2 rounded-sm p-1 bg-purple-200"
+										className="px-2 rounded p-1 mt-1 bg-purple-200"
 										value={item.subTitle}
 										onChange={(e) => {
 											const newContent = [...story.content];
@@ -195,8 +205,8 @@ export default function Edit() {
 								</div>
 								<div>
 									<textarea
-										className="w-full rounded-sm p-1 bg-purple-200"
-										rows={10}
+										className="w-full rounded p-1 mt-1 bg-purple-200"
+										rows={20}
 										value={item.content}
 										onChange={(e) => {
 											const newContent = [...story.content];
@@ -206,29 +216,24 @@ export default function Edit() {
 									></textarea>
 									{/* <div>Update Date: {item.updateDate.toString()}</div> */}
 								</div>
-								<Button
-									color="primary"
-									onPress={() =>
-										newChapter({ index: index, sequence: item.sequence })
-									}
-								>
-									New Chapter
-								</Button>
+								<PurpleGradientButton
+									text="New Chapter"
+									onPress={() => {
+										newChapter({ index: index, sequence: item.sequence });
+									}}
+								></PurpleGradientButton>
 							</div>
 						);
 					})}
 			</div>
 
-			<div>
-				<Button
-					color="primary"
-					size="sm"
+			<div className="mt-1">
+				<PurpleGradientButton
+					text="Save"
 					onPress={() => {
 						saveStory();
 					}}
-				>
-					Save
-				</Button>
+				></PurpleGradientButton>
 			</div>
 		</div>
 	);

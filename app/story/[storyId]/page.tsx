@@ -32,7 +32,7 @@ export default async function StoryPage({ params }: any) {
 				<Header />
 			</header>
 			{story && (
-				<div className="text-center text-purple-800">
+				<div className="text-center text-purple-950">
 					<div className="text-lg font-bold ">{story?.title}</div>
 					<div className="font-semibold text-xs">Author: {story?.author}</div>
 					<div className="pt-3 font-semibold text-sm">Summary</div>
