@@ -36,7 +36,7 @@ export default function Home() {
 							</a>
 							<div className="text-sm pt-1 text-bottom">{story.author} </div>
 							<div className="text-xs pt-2 text-bottom">
-								{story.createDate.toString().substring(0, 10)}{" "}
+								{story.createDate?.toString().substring(0, 10)}{" "}
 							</div>
 						</div>
 						<div className="text-xs p-1 text-bottom">{story.summary}</div>
