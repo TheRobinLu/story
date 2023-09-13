@@ -144,7 +144,7 @@ export default function Edit() {
 							</div>
 							<div className="text-sm text-bottom p-1">{story.author} </div>
 							<div className="text-xs text-bottom p-2">
-								{story.updateDate.toLocaleString().substring(0, 10)}
+								{story.updateDate?.toLocaleString().substring(0, 10)}
 							</div>
 							{/* <div>{story.summary}</div> */}
 						</div>
@@ -206,7 +206,7 @@ export default function Edit() {
 								<div>
 									<textarea
 										className="w-full rounded p-1 mt-1 bg-purple-200"
-										rows={20}
+										rows={30}
 										value={item.content}
 										onChange={(e) => {
 											const newContent = [...story.content];
