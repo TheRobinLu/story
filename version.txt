@@ -1,4 +1,6 @@
 
+0.1.4 Add logo
+
 0.1.3 gradiant button, editPage layout
 
 0.1.2 fix story color, and wrap 
