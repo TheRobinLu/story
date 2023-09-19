@@ -1,17 +1,19 @@
 "use client";
 import CenterPageFlex from "../CenterPageFlex";
-
 import Image from "next/image";
 import { useState } from "react";
+import { Input } from "@nextui-org/react";
 
 import { useEffect } from "react";
 import Link from "next/link";
+import { Password } from "../password";
+
+import { PurpleGradientButton } from "../button";
 
 type error = {
 	username: string;
 	email: string;
 	password: string;
-	passwordConfirmation: string;
 	signUp: string;
 	verificationCode: string;
 };
@@ -21,19 +23,16 @@ export default function Signup() {
 	const [username, setUsername] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
-	const [passwordConfirmation, setPasswordConfirmation] = useState("");
 	const [verificationCode, setVerificationCode] = useState("");
 	const [userVerficationCode, setUserVerificationCode] = useState("");
 	const [isVerified, setIsVerified] = useState(false);
 	const [verificationCodeSent, setVerificationCodeSent] = useState(false);
 	const [signingUp, setSigningUp] = useState(false);
 	const [verficationCodeSending, setVerficationCodeSending] = useState("");
-
 	const [signUpError, setSignUpError] = useState<error>({
 		username: "",
 		email: "",
 		password: "",
-		passwordConfirmation: "",
 		signUp: "",
 		verificationCode: "",
 	});
@@ -46,23 +45,22 @@ export default function Signup() {
 		email: string;
 	}): Promise<{ usernameError: string; emailError: string }> => {
 		try {
-			const userExistsResponse = await fetch("/api/user-exists", {
+			const userExistsResponse = await fetch("/api/user-api", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify({ username, email }),
+				body: JSON.stringify({ action: "USEREXIST", username, email }),
 			});
-			const userExists = await userExistsResponse.json();
-			if (userExists) {
-				if (userExists.status == 201) {
-					const ErrorMsg = userExists.message.toString();
-					return { usernameError: ErrorMsg, emailError: "" };
-				}
-
-				if (userExists.status == 202) {
-					const ErrorMsg = userExists.message.toString();
-					return { usernameError: "", emailError: ErrorMsg };
+			const { exist, message } = await userExistsResponse.json();
+			if (exist) {
+				if (userExistsResponse.status == 201) {
+					const ErrorMsg = message.toString();
+					if (ErrorMsg.toLowerCase().includes("username")) {
+						return { usernameError: ErrorMsg, emailError: "" };
+					} else {
+						return { usernameError: "", emailError: ErrorMsg };
+					}
 				}
 			}
 		} catch (error) {
@@ -84,17 +82,24 @@ export default function Signup() {
 		email: string;
 		password: string;
 	}): Promise<string> => {
+		const action = "SIGNUP";
 		try {
-			const userAddResponse = await fetch("/api/user-add", {
+			const userAddResponse = await fetch("/api/user-api", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify({ username, email, password, active: false }),
+				body: JSON.stringify({
+					action,
+					username,
+					email,
+					password,
+					active: false,
+				}),
 			});
 			const userAdd = await userAddResponse.json();
 
-			if (userAdd.status !== 200) {
+			if (userAddResponse.status !== 200) {
 				const ErrorMsg = userAdd.message.toString();
 				return ErrorMsg;
 			} else {
@@ -151,20 +156,18 @@ export default function Signup() {
 
 	const activateUserAPI = async ({
 		username,
-		email,
 	}: {
 		username: string;
-		email: string;
 	}): Promise<string> => {
-		const activateUserResponse = await fetch("/api/user-activate", {
+		const activateUserResponse = await fetch("/api/user-api", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify({ username, email }),
+			body: JSON.stringify({ action: "ACTIVATE", username }),
 		});
 		const activateUser = await activateUserResponse.json();
-		if (activateUser.status !== 200) {
+		if (activateUserResponse.status !== 200) {
 			const ErrorMsg = activateUser.message.toString();
 			return ErrorMsg;
 		}
@@ -195,7 +198,6 @@ export default function Signup() {
 			username: "",
 			email: "",
 			password: "",
-			passwordConfirmation: "",
 			signUp: "",
 			verificationCode: "",
 		};
@@ -203,6 +205,12 @@ export default function Signup() {
 			newSignUpError.username = "Username is required";
 			validate = false;
 		}
+
+		if (username.length < 4) {
+			newSignUpError.username = "Username must be at least 4 charecters";
+			validate = false;
+		}
+
 		if (email.length === 0) {
 			newSignUpError.email = "Email is required";
 			validate = false;
@@ -216,18 +224,8 @@ export default function Signup() {
 		if (password.length === 0) {
 			newSignUpError.password = "Password is required";
 			validate = false;
-		} else if (password.length < 6) {
-			newSignUpError.password = "Password must be at least 6 charecters";
-			validate = false;
-		}
-
-		if (passwordConfirmation.length === 0) {
-			newSignUpError.passwordConfirmation = "Password Confirmation is required";
-			validate = false;
-		}
-		if (password !== passwordConfirmation) {
-			newSignUpError.passwordConfirmation =
-				"Password Confirmation is not match";
+		} else if (password.length < 8) {
+			newSignUpError.password = "Password must be at least 8 charecters";
 			validate = false;
 		}
 
@@ -251,7 +249,7 @@ export default function Signup() {
 		}
 		setSigningUp(true);
 		setVerficationCodeSending(
-			"VerficationCode is sending rto your email, please wait..."
+			"VerficationCode is sending to your email, please wait..."
 		);
 		sendVerificationCode();
 
@@ -289,7 +287,7 @@ export default function Signup() {
 			return;
 		}
 
-		const activateUserResponse = await activateUserAPI({ username, email });
+		const activateUserResponse = await activateUserAPI({ username });
 
 		if (activateUserResponse.length > 0) {
 			setSignUpError({
@@ -301,19 +299,15 @@ export default function Signup() {
 
 		setIsVerified(true);
 		setVerificationCodeSent(false);
-		if (localStorage) {
-			localStorage.setItem("LuluTalkingUser", username);
-		}
-		window.location.href = "/login";
-
 		resetPage();
+		alert("Sign Up completed");
+		window.location.href = "/login";
 	};
 
 	const resetPage = () => {
 		setUsername("");
 		setEmail("");
 		setPassword("");
-		setPasswordConfirmation("");
 		setVerificationCode("");
 		const newSignUpError = {
 			username: "",
@@ -333,128 +327,112 @@ export default function Signup() {
 
 	return (
 		<CenterPageFlex>
-			<div className="w-full max-w-xs rounded-lg py-2 px-6 shadow-lg shadow-teal-800">
+			<div className="w-full max-w-xs rounded-lg py-2 px-6 shadow-lg shadow-blue-800">
 				<div id="SubscribeInfo" className="w-full">
-					<div className="flex justify-center">
-						<Image width={40} height={40} src="/lulu.png" alt="logo" />
+					<div className="flex justify-center ">
+						<Image
+							width={40}
+							height={60}
+							src="/logo.svg"
+							alt="logo"
+							className=" rounded-lg shadow-lg shadow-purple-100"
+						/>
 					</div>
 
-					<div className="text-2xl font-bold text-center text-teal-800">
+					<div className="text-2xl font-bold text-center text-blue-700">
 						Sign Up
 					</div>
-					<input
-						type="text"
-						name="username"
-						value={username}
+					<Input
+						className="p-1"
+						// variant="underlined"
+						errorMessage={signUpError.username}
+						color="primary"
+						radius="sm"
+						size="sm"
 						onChange={(event: any) => {
 							setUsername(event.target.value);
 						}}
 						placeholder={"User Name"}
-						className="w-full bg-sky-100 mx-1 mt-2 border-2 border-teal-600 p-1 rounded"
-					></input>
-					{signUpError.username.length > 0 && (
-						<div className="text-red-600 text-xs">{signUpError.username} </div>
-					)}
+					></Input>
 
-					<input
-						type="text"
-						name="email"
+					<Input
+						className="p-1"
+						// variant="underlined"
+						errorMessage={signUpError.email}
+						color="primary"
+						radius="sm"
+						size="sm"
 						value={email}
 						onChange={(event: any) => {
 							setEmail(event.target.value);
 						}}
 						placeholder={"Email"}
-						className="w-full bg-sky-100 mx-1  mt-2 border-2 border-teal-600 p-1 rounded"
-					></input>
-					{signUpError.email.length > 0 && (
-						<div className="text-red-600 text-xs">{signUpError.email} </div>
-					)}
+					></Input>
 
-					<input
-						type="password"
-						name="password"
-						value={password}
+					<Password
+						errorMessage={signUpError.password}
 						onChange={(event: any) => {
 							setPassword(event.target.value);
 						}}
-						placeholder={"Password"}
-						className="w-full bg-sky-100 mx-1  mt-2 border-2 border-teal-600 p-1 rounded"
-					></input>
-					{signUpError.password.length > 0 && (
-						<div className="text-red-600 text-xs">{signUpError.password} </div>
-					)}
+					></Password>
 
-					<input
-						type="password"
-						name="passwordConfirmation"
-						value={passwordConfirmation}
-						onChange={(event: any) => {
-							setPasswordConfirmation(event.target.value);
-						}}
-						placeholder={"Password Confirmation"}
-						className="w-full bg-sky-100 mx-1  mt-2 border-2 border-teal-600 p-1 rounded"
-					></input>
-					{signUpError.passwordConfirmation.length > 0 && (
-						<div className="text-red-600 text-xs">
-							{signUpError.passwordConfirmation}{" "}
-						</div>
-					)}
 					<div className="pt-1"></div>
 					<div className="text-green-600 text-xs">{verficationCodeSending}</div>
-					<div className="mt-4">
-						<button
-							className="btn-teal m-2"
-							disabled={signingUp}
-							onClick={signUp}
-						>
-							{"Sign Up"}
-						</button>
-						<Link href="/">
-							<button className="btn-teal m-2">{"Cancel"}</button>
-						</Link>
+					<div className="flex mt-4">
+						<div className="mx-1">
+							<PurpleGradientButton onPress={signUp}>
+								Sign Up
+							</PurpleGradientButton>
+						</div>
+						<div className="mx-1">
+							<Link href="/">
+								<PurpleGradientButton
+									onPress={() => {
+										return;
+									}}
+								>
+									Cancel
+								</PurpleGradientButton>
+							</Link>
+						</div>
 					</div>
-					{signUpError.signUp.length > 0 && (
-						<div className="text-red-600 text-xs">{signUpError.signUp} </div>
-					)}
-					<div className="text-right text-xs text-teal-600 hover:text-teal-400">
-						<Link href="/login"> {"I have an account"}</Link>
+
+					<div className="text-right text-xs text-blue-700 hover:text-blue-500">
+						<Link href="/login"> I have an account</Link>
 					</div>
 				</div>
 
 				{verificationCodeSent && (
 					<div id="Verification" className="w-full max-w-xs">
-						<hr className="border-teal-600 m-3 shadow-lg  shadow-neutral-500 "></hr>
-						<div className="text-2xl font-bold text-center text-teal-800">
+						<hr className="border-blue-600 m-3 shadow-lg  shadow-neutral-500 "></hr>
+						<div className="text-2xl font-bold text-center text-blue-700 p-1">
 							{"Verification"}
 						</div>
 
-						<div className="w-full">
-							<input
-								type="text"
-								name="userVerificationCode"
-								value={userVerficationCode}
+						<div className="flex w-full pt-1 ">
+							<Input
+								errorMessage={signUpError.verificationCode}
+								color="primary"
+								type="number"
+								radius="sm"
+								size="sm"
 								onChange={(event: any) => {
 									setUserVerificationCode(event.target.value);
 								}}
 								placeholder={"Verification Code"}
-								className="w-24 bg-sky-100 mx-1  mt-2 border-2 border-teal-600 p-1 rounded"
-							></input>
-							<button
-								className="btn-teal text-xs m-2"
-								onClick={sendVerificationCode}
-							>
-								{"Resend"}
-							</button>
+								className="p-1 w-3/4"
+							></Input>
+							<div className="p-1">
+								<PurpleGradientButton onPress={sendVerificationCode}>
+									{"Resend"}
+								</PurpleGradientButton>
+							</div>
 						</div>
-						<button className="btn-teal m-2" onClick={verifyUser}>
-							{"Verify"}
-						</button>
-						<div>
-							{signUpError.verificationCode.length > 0 && (
-								<div className="text-red-600 text-xs">
-									{signUpError.verificationCode}{" "}
-								</div>
-							)}
+
+						<div className="p-1">
+							<PurpleGradientButton onPress={verifyUser}>
+								{"Verify"}
+							</PurpleGradientButton>
 						</div>
 					</div>
 				)}

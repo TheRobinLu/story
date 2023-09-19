@@ -115,17 +115,19 @@ export default function Edit() {
 		<div className="text-gray-700">
 			<div className="flex gap-2">
 				<PurpleGradientButton
-					text="New"
 					onPress={() => {
 						createStory();
 					}}
-				></PurpleGradientButton>
+				>
+					New
+				</PurpleGradientButton>
 				<PurpleGradientButton
-					text="Open"
 					onPress={() => {
 						openStoryList();
 					}}
-				></PurpleGradientButton>
+				>
+					Open
+				</PurpleGradientButton>
 			</div>
 			{selectStory && (
 				<div>
@@ -182,11 +184,12 @@ export default function Edit() {
 				</div>
 
 				<PurpleGradientButton
-					text="New Chapter"
 					onPress={() => {
 						newChapter({ index: -1, sequence: 0 });
 					}}
-				></PurpleGradientButton>
+				>
+					New Chapter
+				</PurpleGradientButton>
 
 				{story.content?.length > 0 &&
 					story.content.map((item, index) => {
@@ -217,11 +220,12 @@ export default function Edit() {
 									{/* <div>Update Date: {item.updateDate.toString()}</div> */}
 								</div>
 								<PurpleGradientButton
-									text="New Chapter"
 									onPress={() => {
 										newChapter({ index: index, sequence: item.sequence });
 									}}
-								></PurpleGradientButton>
+								>
+									New Chapter
+								</PurpleGradientButton>
 							</div>
 						);
 					})}
@@ -229,11 +233,12 @@ export default function Edit() {
 
 			<div className="mt-1">
 				<PurpleGradientButton
-					text="Save"
 					onPress={() => {
 						saveStory();
 					}}
-				></PurpleGradientButton>
+				>
+					Save
+				</PurpleGradientButton>
 			</div>
 		</div>
 	);
