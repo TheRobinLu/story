@@ -13,9 +13,18 @@ export default function Header() {
 	useEffect(() => {
 		//get LuluStoryUser from cookie
 		const LuluStoryUser = getCookie("LuluStoryUser");
+		console.log("LuluStoryUser:", LuluStoryUser);
 		if (LuluStoryUser) {
 			setIsSignUp(true);
 		}
+
+		const a = setCookie("test", "test11111");
+		const b = getCookie("test");
+		console.log("b:", b);
+
+		setCookie("test", "test2220");
+		const c = getCookie("test");
+		console.log("c:", c);
 
 		const LuluStoryLogin = getCookie("_lli");
 
@@ -57,7 +66,7 @@ export default function Header() {
 				<Link href="/edit">Edit</Link>
 				{/* <Link href="/about">About</Link> */}
 			</nav>
-			<div className="flex gap-2 right-0 text-xs font-light text-indigo-800">
+			<div className="flex gap-2 right-0 text-xs text-indigo-800">
 				{isLogin && (
 					<div className="flex gap-2" onClick={logOut}>
 						Logout
@@ -76,7 +85,7 @@ export default function Header() {
 					</Link>
 				)}
 
-				<div>Version: 0.1.5</div>
+				<div className=" text-[8px] px-2">Version: 0.1.6</div>
 			</div>
 		</header>
 	);

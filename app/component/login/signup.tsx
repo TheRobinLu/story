@@ -7,6 +7,7 @@ import { Input } from "@nextui-org/react";
 import { useEffect } from "react";
 import Link from "next/link";
 import { Password } from "../password";
+import { setCookie, getCookie } from "cookies-next";
 
 import { PurpleGradientButton } from "../button";
 
@@ -297,11 +298,30 @@ export default function Signup() {
 			return;
 		}
 
+		setUserCookie(username);
+
 		setIsVerified(true);
 		setVerificationCodeSent(false);
 		resetPage();
 		alert("Sign Up completed");
 		window.location.href = "/login";
+	};
+
+	const setUserCookie = async (username: string) => {
+		const response = await fetch("/api/encode", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ text: username }),
+		});
+		if (response.status !== 200) {
+			alert("Error encoding user name");
+			return;
+		}
+		const { encodedText } = await response.json();
+		setCookie("LuluStoryUser", encodedText.toString());
+		return;
 	};
 
 	const resetPage = () => {
