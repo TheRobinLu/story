@@ -59,18 +59,26 @@ async function login({
 	res: NextApiResponse;
 }) {
 	const { username, password } = req.body;
-	verifyPassword({ username: username.toLowerCase(), password }).then(
-		(result) => {
-			if (result) {
-				updateLoginDate(username);
-				getUserRole(username).then((role) => {
-					res.status(200).json({ role });
-				});
-			} else {
-				res.status(401).json({ message: "Unauthorized" });
-			}
+	const respVerify = await verifyPassword({
+		username: username.toLowerCase(),
+		password,
+	});
+
+	if (respVerify) {
+		updateLoginDate(username);
+
+		const role = await getUserRole(username);
+		console.log("role:", role);
+		if (role.length > 0) {
+			res.status(200).json({ role });
+		} else {
+			res.status(401).json({ message: "Unauthorized" });
 		}
-	);
+	} else {
+		res.status(401).json({ message: "Unauthorized" });
+	}
+
+	return;
 }
 
 async function changePwd({

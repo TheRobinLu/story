@@ -4,17 +4,18 @@ import Image from "next/image";
 import { Input } from "@nextui-org/react";
 import { Password } from "../password";
 import { PurpleGradientButton } from "../button";
-import { KeyboardEventHandler, useEffect, useState } from "react";
+import { KeyboardEventHandler, useEffect, useState, useRef } from "react";
 import { Session } from "inspector";
 import Link from "next/link";
-import { getCookie } from "cookies-next";
+import { setCookie, getCookie } from "cookies-next";
 
 export default function LogIn() {
-	const [language, setLanguage] = useState("en");
 	const [username, setUsername] = useState("");
 	const [userRole, setUserRole] = useState("user");
 	const [password, setPassword] = useState("");
 	const [passwordError, setPasswordError] = useState("");
+
+	let newRole = userRole;
 
 	useEffect(() => {
 		const cookieUser = getCookie("LuluStoryUser");
@@ -45,27 +46,52 @@ export default function LogIn() {
 		});
 		const login = await loginResponse.json();
 
-		if (login.status !== 200) {
-			const ErrorMsg = login.message.toString();
+		if (loginResponse.status !== 200) {
+			const ErrorMsg = login.message?.toString();
 			return ErrorMsg;
 		} else {
 			const role = login.role;
 			setUserRole(role);
-
+			newRole = role;
+			alert("user role: " + newRole.toString());
 			return "";
 		}
 	};
 
-	const handleLogin = async (event: any) => {
-		event.preventDefault();
+	const handleLogin = async () => {
 		const loginResponse = await loginAPI();
-
+		alert("user role at handleLogin: " + newRole.toString());
 		if (loginResponse !== "") {
 			alert(loginResponse);
 			return;
 		}
 
-		//ge page go back url
+		//set sessionStorage user role
+		sessionStorage.setItem("userRole", btoa(newRole));
+		sessionStorage.setItem("username", btoa(username));
+
+		let encodeUsername = "";
+		//update cookie
+		await fetch("/api/encode", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ text: username }),
+		}).then((res) => {
+			if (res.status === 200) {
+				res.json().then((data) => {
+					encodeUsername = data.encodedText;
+				});
+			}
+		});
+
+		setCookie("LuluStoryUser", encodeUsername, {
+			maxAge: 86400,
+			path: "/",
+		});
+
+		//get page go back url
 		const currentUrl = document.location.href;
 		if (currentUrl.includes("login")) {
 			window.location.href = "/";
@@ -76,20 +102,11 @@ export default function LogIn() {
 		return;
 	};
 
-	//when key is enter, login
-	const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = async (
-		event
-	) => {
-		if (event.key === "Enter") {
-			await handleLogin(event);
-		}
-	};
-
 	//How to trigger handleKeyDown
 	//<Input onKeyDown={handleKeyDown} />
 	return (
 		<CenterPageFlex>
-			<div className="w-full max-w-xs rounded-lg py-3 px-6 shadow-lg shadow-teal-800">
+			<div className="w-full max-w-xs rounded-lg py-3 px-6 shadow-lg shadow-blue-800">
 				<div className="flex justify-center">
 					<Image
 						width={40}
@@ -124,7 +141,7 @@ export default function LogIn() {
 
 				<div className="flex justify-items-stretch mt-6">
 					<div className="p-1">
-						<PurpleGradientButton onPress={() => handleLogin}>
+						<PurpleGradientButton onPress={handleLogin}>
 							{"Log In"}
 						</PurpleGradientButton>
 					</div>
