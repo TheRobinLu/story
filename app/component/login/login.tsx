@@ -70,7 +70,6 @@ export default function LogIn() {
 		sessionStorage.setItem("userRole", btoa(newRole));
 		sessionStorage.setItem("username", btoa(username));
 
-		let encodeUsername = "";
 		//update cookie
 		await fetch("/api/encode", {
 			method: "POST",
@@ -81,14 +80,14 @@ export default function LogIn() {
 		}).then((res) => {
 			if (res.status === 200) {
 				res.json().then((data) => {
-					encodeUsername = data.encodedText;
+					const encodeUsername = data.encodedText;
+
+					setCookie("LuluStoryUser", encodeUsername, {
+						maxAge: 86400,
+						path: "/",
+					});
 				});
 			}
-		});
-
-		setCookie("LuluStoryUser", encodeUsername, {
-			maxAge: 86400,
-			path: "/",
 		});
 
 		//get page go back url

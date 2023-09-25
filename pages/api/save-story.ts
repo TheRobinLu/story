@@ -7,7 +7,6 @@ export default async function handler(
 	res: NextApiResponse
 ) {
 	const { method } = req;
-
 	const { id, story } = req.body;
 	switch (method) {
 		case "POST":

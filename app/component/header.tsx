@@ -18,39 +18,34 @@ export default function Header() {
 			setIsSignUp(true);
 		}
 
-		const a = setCookie("test", "test11111");
-		const b = getCookie("test");
-		console.log("b:", b);
+		//const encodedUsername = sessionStorage.getItem("username");
 
-		setCookie("test", "test2220");
-		const c = getCookie("test");
-		console.log("c:", c);
+		const sessionUser = sessionStorage.getItem("username");
 
-		const LuluStoryLogin = getCookie("_lli");
-
-		if (!LuluStoryUser || !LuluStoryLogin) {
+		if (!sessionUser) {
 			return;
 		}
-
-		fetch("/api/parse-login", {
+		//check if sessionUser is valid
+		fetch("/api/check-user", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify({ username: LuluStoryUser, _lli: LuluStoryLogin }),
-		})
-			.then((res) => res.json())
-			.then((data) => {
-				if (data.message === "true") {
-					setIsLogin(true);
-				}
-			})
-			.catch((err) => {
-				console.log("err", err);
-			});
+			body: JSON.stringify({
+				sessionUser: sessionUser,
+				cookieUser: LuluStoryUser,
+			}),
+		}).then((res) => {
+			if (res.status === 200) {
+				setIsLogin(true);
+			}
+		});
 	}, []);
 
-	function logOut(): void {}
+	function logOut() {
+		sessionStorage.removeItem("username");
+		window.location.reload();
+	}
 
 	return (
 		<header className="flex items-center justify-between px-2 my-1 text-blue-100 bg-purple-400 shadow shadow-purple-300">
@@ -63,14 +58,13 @@ export default function Header() {
 			></Image>
 			<nav className="nav-bar flex gap-4 font-bold text-indigo-800 ">
 				<Link href="/">Home</Link>
-				<Link href="/edit">Edit</Link>
-				{/* <Link href="/about">About</Link> */}
+				{isLogin && <Link href="/edit">Edit</Link>}
 			</nav>
 			<div className="flex gap-2 right-0 text-xs text-indigo-800">
 				{isLogin && (
-					<div className="flex gap-2" onClick={logOut}>
+					<button className="flex gap-2" onClick={logOut}>
 						Logout
-					</div>
+					</button>
 				)}
 
 				{!isSignUp && (
@@ -85,7 +79,7 @@ export default function Header() {
 					</Link>
 				)}
 
-				<div className=" text-[8px] px-2">Version: 0.1.7</div>
+				<div className=" text-[8px] px-2">Version: 0.2.0</div>
 			</div>
 		</header>
 	);

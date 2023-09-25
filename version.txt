@@ -1,5 +1,7 @@
 
-0.1.6 Complete Login user setting
+0.2.0 Full function credencial
+
+0.1.7 Complete Login user setting
 
 0.1.6 Add Login sceen
 
