@@ -10,6 +10,15 @@ export default function Edit() {
 	const [story, setStory] = useState({} as IDBStory);
 	const [storyList, setStoryList] = useState([] as IDBStoryList[]);
 	const [selectStory, setSelectStory] = useState(false);
+	const [username, setUsername] = useState("");
+
+	useEffect(() => {
+		const sessionUser = sessionStorage.getItem("username");
+		if (!sessionUser) {
+			return;
+		}
+		setUsername(atob(sessionUser));
+	}, []);
 
 	const newStory: IDBStory = {
 		_id: null,
@@ -20,6 +29,7 @@ export default function Edit() {
 		updateDate: new Date(),
 		content: [] as IChapter[],
 		editing: true,
+		username: username,
 	};
 
 	const createStory = () => {
@@ -52,6 +62,7 @@ export default function Edit() {
 			headers: {
 				"Content-Type": "application/json",
 			},
+			body: JSON.stringify({ username: username }),
 		});
 		const data = await response.json();
 		const storyList = data.storyList;

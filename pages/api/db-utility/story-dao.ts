@@ -42,6 +42,7 @@ export async function UpdateStory({
 			summary: story.summary,
 			content: story.content,
 			editing: false,
+			username: story.username,
 		};
 		console.log("newStory: ", newStory);
 		const result = await collection.updateOne(
@@ -70,14 +71,14 @@ export async function GetStory(storyId: any) {
 	return retStory;
 }
 
-export async function GetStoryList() {
+export async function GetStoryList(username: string) {
 	const client = await connectToDatabase();
 	const db = client.db();
 	const collection = db.collection("story");
 	//Project to _id, title, author, createDate, updateDate, summary
 	//console.log("==================GetStoryList==================");
 	const storyList = await collection
-		.find({})
+		.find({ username: username })
 		.project({
 			_id: 1,
 			title: 1,
@@ -85,6 +86,7 @@ export async function GetStoryList() {
 			createDate: 1,
 			updateDate: 1,
 			summary: 1,
+			username: 1,
 		})
 		.sort({ updateDate: -1 })
 		.toArray();
