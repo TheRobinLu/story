@@ -67,7 +67,7 @@ async function login({
 	if (respVerify) {
 		updateLoginDate(username);
 
-		const role = await getUserRole(username);
+		const role = await getUserRole(username.toLowerCase());
 		console.log("role:", role);
 		if (role.length > 0) {
 			res.status(200).json({ role });
