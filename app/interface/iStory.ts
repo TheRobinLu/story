@@ -16,6 +16,7 @@ export interface IStory {
 	summary: string;
 	content: IChapter[];
 	editing: boolean;
+	username: string;
 }
 
 export interface IDBStoryList {

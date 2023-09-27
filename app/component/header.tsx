@@ -79,7 +79,7 @@ export default function Header() {
 					</Link>
 				)}
 
-				<div className=" text-[8px] px-2">Version: 0.2.0</div>
+				<div className=" text-[8px] px-2">Version: 0.2.1</div>
 			</div>
 		</header>
 	);
