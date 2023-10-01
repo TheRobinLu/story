@@ -53,14 +53,14 @@ export default function LogIn() {
 			const role = login.role;
 			setUserRole(role);
 			newRole = role;
-			alert("user role: " + newRole.toString());
+			//alert("user role: " + newRole.toString());
 			return "";
 		}
 	};
 
 	const handleLogin = async () => {
 		const loginResponse = await loginAPI();
-		alert("user role at handleLogin: " + newRole.toString());
+		//alert("user role at handleLogin: " + newRole.toString());
 		if (loginResponse !== "") {
 			alert(loginResponse);
 			return;
