@@ -57,7 +57,7 @@ export default function Edit() {
 	}
 
 	async function openStoryList() {
-		const response = await fetch("/api/story-list", {
+		const response = await fetch("/api/story-list-byuser", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
