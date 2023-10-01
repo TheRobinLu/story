@@ -1,4 +1,5 @@
 import { IDBStory, IStory } from "@/app/interface/iStory";
+import exp from "constants";
 import { MongoClient, Db, ObjectId } from "mongodb";
 
 async function connectToDatabase(): Promise<MongoClient> {
@@ -71,6 +72,28 @@ export async function GetStory(storyId: any) {
 	return retStory;
 }
 
+export async function GetAllStoryList() {
+	const client = await connectToDatabase();
+	const db = client.db();
+	const collection = db.collection("story");
+	const storyList = await collection
+		.find({})
+		.project({
+			_id: 1,
+			title: 1,
+			author: 1,
+			createDate: 1,
+			updateDate: 1,
+			summary: 1,
+			username: 1,
+		})
+		.sort({ updateDate: -1 })
+		.toArray();
+
+	client.close();
+	return storyList;
+}
+
 export async function GetStoryList(username: string) {
 	const client = await connectToDatabase();
 	const db = client.db();
@@ -90,7 +113,7 @@ export async function GetStoryList(username: string) {
 		})
 		.sort({ updateDate: -1 })
 		.toArray();
-	//console.log(storyList);
+	console.log(storyList);
 	client.close();
 	return storyList;
 }
